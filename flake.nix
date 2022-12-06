@@ -29,6 +29,7 @@
           devshell.packages = [
             pkgs.hyperfine
             pkgs.nixpkgs-fmt
+            pkgs.ruby_3_1
           ];
         };
       }
