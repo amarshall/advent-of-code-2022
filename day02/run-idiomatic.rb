@@ -27,7 +27,7 @@ shape_points = {
   'scissors' => 3,
 }
 
-games = input.readlines.map { |line| line.split(' ') }
+games = input.readlines.map { |line| line.split(' ') }.each(&:freeze).freeze
 
 part1 = games.sum do |them, us|
   them = name_map.fetch(them)

@@ -9,12 +9,12 @@ stacks = input_stacks.split("\n").reverse_each.drop(1).map do |line|
   line.split(//).each_slice(4).map do |item|
     item.join.match(/\[(.)\]/)&.[](1)
   end
-end.transpose.map(&:compact).map(&:freeze).freeze
+end.transpose.map(&:compact).each(&:freeze).freeze
 
 actions = input_actions.split("\n").map do |line|
   count, from, to = line.match(/move (\d+) from (\d+) to (\d+)/).captures.map { |s| Integer(s) }
   {count:, from:, to:}
-end
+end.each(&:freeze).freeze
 
 def apply_action(stacks:, count:, from:, to:, reverse:)
   items = stacks[from-1].pop(count)

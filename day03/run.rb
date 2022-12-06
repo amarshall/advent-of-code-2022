@@ -4,7 +4,7 @@ require 'pathname'
 
 input = Pathname.new(__dir__).join('./input.txt').freeze
 lines = input.readlines.each(&:freeze).freeze
-rucksacks = lines.map { |line| line.strip.split(//) }
+rucksacks = lines.map { |line| line.strip.split(//) }.each(&:freeze).freeze
 
 class Array
   def split_at(idx)
