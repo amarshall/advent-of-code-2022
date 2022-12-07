@@ -6,12 +6,8 @@ input = Pathname.new(__dir__).join('./input.txt').freeze
 lines = input.readlines.each(&:freeze).freeze
 
 def parents(path)
-  parents = []
-  until path.parent == path
-    path = path.parent
-    parents << path
-  end
-  parents
+  return [] if path.parent == path
+  [path.parent, *parents(path.parent)]
 end
 
 cwd = Pathname.new('/')
