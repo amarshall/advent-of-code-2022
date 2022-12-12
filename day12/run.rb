@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 
 require 'pathname'
+require 'set'
 
 input = Pathname.new(__dir__).join('./input.txt').freeze
 
-class Point < Struct.new(:x, :y, :raw, :height, :dist, :target?, :prev); end
+class Point < Struct.new(:x, :y, :raw, :height, :dist, :target?, :prev)
+  def hash; x.hash ^ y.hash end
+end
 OFFSETS = [-1,0,1].permutation(2).reject { |p| p.none?(&:zero?) }.freeze
 
 grid = input.each_line.map.with_index do |line, y|
@@ -26,11 +29,11 @@ def neighbors(grid, point)
   end
 end
 
-q = grid.flatten
+q = grid.flatten.to_set
 until q.empty?
   u = q.sort_by(&:dist).first
   q.delete(u)
-  (neighbors(grid, u) & q).each do |v|
+  (q & neighbors(grid, u)).each do |v|
     alt = u.dist + 1
     if alt < v.dist
       v.dist = alt
