@@ -10,8 +10,8 @@ OFFSETS = [-1,0,1].permutation(2).reject { |p| p.none?(&:zero?) }.freeze
 grid = input.each_line.map.with_index do |line, y|
   line.chomp.split(//).map.with_index do |height, x|
     Point.new(x, y, height,
-      {?S => ?a, ?E => ?z}.fetch(height, height).codepoints.first, height == ?S ? 0 : Float::INFINITY,
-      height == ?E,
+      {?S => ?a, ?E => ?z}.fetch(height, height).codepoints.first, height == ?E ? 0 : Float::INFINITY,
+      height == ?S,
     )
   end.freeze
 end.freeze
@@ -29,7 +29,6 @@ end
 q = grid.flatten
 until q.empty?
   u = q.sort_by(&:dist).first
-  break if u.target?
   q.delete(u)
   (neighbors(grid, u) & q).each do |v|
     alt = u.dist + 1
@@ -41,6 +40,6 @@ until q.empty?
 end
 
 part1 = grid.flatten.detect(&:target?).dist
-part2 = nil
+part2 = grid.flatten.select { |p| p.raw == ?a }.map(&:dist).min
 
 puts "part1=#{part1} part2=#{part2}"
