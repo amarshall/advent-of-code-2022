@@ -58,4 +58,4 @@ end
 part1 = run(monkeys.dup.map(&:dup), 20, worry_div: true)
 part2 = run(monkeys.dup.map(&:dup), 10_000, worry_div: false)
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

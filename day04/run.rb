@@ -30,4 +30,4 @@ part2 = assignments.each_slice(2).select do |a, b|
   a.overlaps?(b)
 end.size
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

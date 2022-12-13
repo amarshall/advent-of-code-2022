@@ -53,4 +53,4 @@ end.freeze
 part1 = run(actions, 2).count
 part2 = run(actions, 10).count
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

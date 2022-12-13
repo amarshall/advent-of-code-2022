@@ -40,7 +40,7 @@ input.each_line do |line|
 end
 
 part1 = final_val
-puts "part1=#{part1} part2="
+puts "part1:#{part1} part2:"
 display.each do |row|
   puts row.join
 end

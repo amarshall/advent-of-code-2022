@@ -41,7 +41,6 @@ walk(grid, visible_grid, viewing_distance_grid)
 end
 
 part1 = visible_grid.flatten.select { |x| x }.count
-
 part2 = viewing_distance_grid.flatten(1).map { |distances| distances.reduce(:*) }.max
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

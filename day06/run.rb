@@ -14,4 +14,4 @@ end
 part1 = find_marker(packets, 4)
 part2 = find_marker(packets, 14)
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

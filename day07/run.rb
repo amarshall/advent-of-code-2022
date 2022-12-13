@@ -37,4 +37,4 @@ wanted_space = 30_000_000
 needed_space = wanted_space - (total_space - total_size)
 part2 = sizes.values.sort.detect { |size| size >= needed_space }
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

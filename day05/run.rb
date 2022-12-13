@@ -34,4 +34,4 @@ part2 = begin
   stacks2.map(&:last).join
 end
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

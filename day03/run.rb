@@ -23,4 +23,4 @@ part2 = rucksacks.each_slice(3).flat_map do |group|
   group.reduce(:&).map { |item| priorities.fetch(item) }
 end.sum
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

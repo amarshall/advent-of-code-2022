@@ -57,4 +57,4 @@ part2 = games.sum do |them, decision|
   win_points + shape_points.fetch(us)
 end
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"

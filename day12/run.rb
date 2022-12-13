@@ -45,4 +45,4 @@ end
 part1 = grid.flatten.detect(&:target?).dist
 part2 = grid.flatten.select { |p| p.raw == ?a }.map(&:dist).min
 
-puts "part1=#{part1} part2=#{part2}"
+puts "part1:#{part1} part2:#{part2}"
