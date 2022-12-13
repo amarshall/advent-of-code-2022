@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'json'
 require 'pathname'
 
 input = Pathname.new(__dir__).join('./input.txt').freeze
-packets = input.readlines.map { |s| eval(s) }.compact
+packets = input.readlines.grep(/./).map { |s| JSON.parse(s) }
 
 def check_order(a, b)
   case [a, b]
