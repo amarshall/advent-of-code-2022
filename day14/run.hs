@@ -108,6 +108,15 @@ lineToPoints line = map (start .+^) offsets
 addRockLine :: PLine -> Grid -> Grid
 addRockLine line grid = foldr (setElemP Rock) grid (lineToPoints line)
 
+floorPoints :: [Pos] -> [Pos]
+floorPoints rawPoints = lineThrough (Point2 startX height) (Point2 endX height) & lineToPoints
+  where
+    startX = (dimensions rawPoints ^. yCoord) - (height `div` 2)
+    endX = (dimensions rawPoints ^. yCoord) + (height `div` 2)
+    height = (dimensions rawPoints ^. yCoord) + 2
+    width = height * 2 -1
+
+
 getNext :: Grid -> Pos -> Maybe Pos
 getNext grid point =
   find isAvailable [pointBelow, pointLeft, pointRight]
@@ -129,9 +138,10 @@ main = do
   let pointsRaw = parse input
   let offset = getOffset $ concat pointsRaw
   let points = map (map (.+^ offset)) pointsRaw
-  let lines = concatMap pointsToLines points
+  let lines = concatMap pointsToLines points ++ [floorLine $ concat pointsRaw]
   let sandOrigin = Point2 500 1 .+^ offset
   let gridStart = concat pointsRaw & mkGrid & \g -> foldr addRockLine g lines & setElemP Origin sandOrigin
-  let grid = fromJust $ upUntil isNothing (simulate sandOrigin . fromJust) (Just gridStart)
-  let sand = grid & toList & filter (== Sand) & length
-  print sand
+  print gridStart
+  -- let grid = fromJust $ upUntil isNothing (simulate sandOrigin . fromJust) (Just gridStart)
+  -- let sand = grid & toList & filter (== Sand) & length
+  -- putStrLn $ "part1:" ++ show sand
