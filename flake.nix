@@ -27,6 +27,15 @@
         devShells.default = pkgs.devshell.mkShell {
           motd = "";
           devshell.packages = [
+            (pkgs.haskellPackages.ghcWithPackages (hpkgs: [
+              hpkgs.executable-path
+              hpkgs.extra
+              hpkgs.hgeometry
+              hpkgs.matrix
+              hpkgs.regex-with-pcre
+              hpkgs.split
+            ]))
+            pkgs.haskell-language-server
             pkgs.hyperfine
             pkgs.nixpkgs-fmt
             pkgs.ruby_3_1
