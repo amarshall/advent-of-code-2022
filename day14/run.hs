@@ -57,6 +57,8 @@ instance Show Cell where
   show Origin = "+"
   show Sand = "o"
 
+center = 500
+
 pointForMatrix :: Pos -> (Int, Int)
 pointForMatrix p = (p ^. yCoord, p ^. xCoord)
 
@@ -82,7 +84,7 @@ getOffset :: [Pos] -> Vector 2 Int
 getOffset points = let
   get reducer getter = points & map (^. getter) & foldr1 reducer
   x = - get min xCoord + 1
-  in Vector2 x 0
+  in Vector2 x 1
 
 pointsToLines :: [Pos] -> [PLine]
 pointsToLines = eachCons 2 >>> map (tuplify2 >>> uncurry lineThrough)
@@ -108,30 +110,55 @@ lineToPoints line = map (start .+^) offsets
 addRockLine :: PLine -> Grid -> Grid
 addRockLine line grid = foldr (setElemP Rock) grid (lineToPoints line)
 
-getNext :: Grid -> Pos -> Maybe Pos
-getNext grid point =
+floorPoints :: [Pos] -> [Pos]
+floorPoints rawPoints = lineThrough (Point2 startX (height - 2)) (Point2 endX (height - 2)) & lineToPoints
+  where
+    floorOffset = 3
+    startX = center - (height `div` 2) - floorOffset - 100 -- random number that is big enough...
+    endX = center + (height `div` 2) + floorOffset + 100
+    height = (dimensions rawPoints ^. yCoord) + floorOffset
+
+getNext :: [Maybe Cell] -> Grid -> Pos -> Maybe Pos
+getNext extraAvailable grid point =
   find isAvailable [pointBelow, pointLeft, pointRight]
   where
-    isAvailable p = safeGetP p grid `elem` [Just Air, Nothing]
+    isAvailable p = safeGetP p grid `elem` Just Air : extraAvailable
     pointBelow = point .+^ Vector2 0 1
     pointLeft = point .+^ Vector2 (-1) 1
     pointRight = point .+^ Vector2 1 1
 
-simulate :: Pos -> Grid -> Maybe Grid
-simulate point grid =
+simulate :: [Maybe Cell] -> Pos -> Grid -> Maybe Grid
+simulate extraAvailable point grid =
   case next of
-    Just point -> safeGetP point grid >> simulate point grid
+    Just point -> safeGetP point grid >> simulate extraAvailable point grid
     Nothing -> safeSetP Sand point grid
-  where next = getNext grid point
+  where next = getNext extraAvailable grid point
+
+mk :: [[Pos]] -> (Grid, Pos)
+mk pointsRaw = (grid, sandOrigin)
+  where
+    offset = getOffset $ concat pointsRaw
+    points = map (map (.+^ offset)) pointsRaw
+    lines = concatMap pointsToLines points
+    sandOrigin = Point2 center 0 .+^ offset
+    grid = concat pointsRaw & mkGrid & \g -> foldr addRockLine g lines & setElemP Origin sandOrigin
+
+countSand :: Grid -> Int
+countSand = toList >>> filter (== Sand) >>> length
+
+part1 pointsRaw = do
+  let (gridStart, sandOrigin) = mk pointsRaw
+  let grid = fromJust $ upUntil isNothing (simulate [Nothing] sandOrigin . fromJust) (Just gridStart)
+  putStrLn $ "part1:" ++ show (countSand grid)
+
+part2 pointsRaw1 = do
+  let pointsRaw = pointsRaw1 ++ [floorPoints (concat pointsRaw1)]
+  let (gridStart, sandOrigin) = mk pointsRaw
+  let grid = fromJust $ until (\g -> safeGetP sandOrigin (fromJust g) == Just Sand) (simulate [] sandOrigin . fromJust) (Just gridStart)
+  putStrLn $ "part2:" ++ show (countSand grid)
 
 main = do
   input <- readInput
-  let pointsRaw = parse input
-  let offset = getOffset $ concat pointsRaw
-  let points = map (map (.+^ offset)) pointsRaw
-  let lines = concatMap pointsToLines points
-  let sandOrigin = Point2 500 1 .+^ offset
-  let gridStart = concat pointsRaw & mkGrid & \g -> foldr addRockLine g lines & setElemP Origin sandOrigin
-  let grid = fromJust $ upUntil isNothing (simulate sandOrigin . fromJust) (Just gridStart)
-  let sand = grid & toList & filter (== Sand) & length
-  print sand
+  let rawPoints = parse input
+  part1 rawPoints
+  part2 rawPoints
