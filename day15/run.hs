@@ -19,6 +19,13 @@ scriptPathToFilePath (RunGHC fp) = return fp
 scriptPathToFilePath (Executable fp) = return fp
 scriptPathToFilePath Interactive = getCurrentDirectory
 
+eachCons :: Int -> [a] -> [[a]]
+eachCons _ [] = []
+eachCons n xs@(_:rest)
+  | length xs == n = [window]
+  | otherwise = window : eachCons n rest
+  where window = take n xs
+
 tuplify2 :: [a] -> (a, a)
 tuplify2 [a, b] = (a, b)
 tuplify2 _ = error "oops"
@@ -39,6 +46,9 @@ parseLine input =
 
 getXY :: Pos -> [Int]
 getXY p = [p ^. xCoord, p ^. yCoord]
+
+getXY' :: Pos -> (Int, Int)
+getXY' p = (p ^. xCoord, p ^. yCoord)
 
 distance :: Pos -> Pos -> Int
 distance a b = zipWith (-) (getXY a) (getXY b) & map abs & sum
@@ -69,9 +79,21 @@ noBeaconRange y (sensor, range) =
     sy = sensor ^. yCoord
     dx = range - abs (sy - y)
 
+noBeaconRanges :: Int -> [Sensor] -> [(Int, Int)]
+noBeaconRanges targetY sensors = mapMaybe (noBeaconRange targetY) sensors & dedupRanges
+
 part1 :: Int -> [Sensor] -> Int
 part1 targetY sensors =
-  sensors & mapMaybe (noBeaconRange targetY) & dedupRanges & map (uncurry $ flip (-)) & sum
+  sensors & noBeaconRanges targetY & map (uncurry $ flip (-)) & sum
+
+tuningFreq :: (Int, Int) -> Int
+tuningFreq (x, y) = (x * 4_000_000) + y
+
+part2 :: [Sensor] -> Int
+part2 sensors = tuningFreq (x, y)
+  where
+    y = fromJust $ find (\y -> length (noBeaconRanges y sensors) == 2) [0..4_000_000]-- (iterate (+ 1) 0)
+    x = noBeaconRanges y sensors & head & snd & (+ 1)
 
 main = do
   input <- readInput
@@ -79,3 +101,4 @@ main = do
   let allPoints = sensorPoints ++ beacons
   let sensors = zipWith (curry toSensor) sensorPoints beacons
   putStrLn $ "part1:" ++ show (part1 2_000_000 sensors)
+  putStrLn $ "part2:" ++ show (part2 sensors)
