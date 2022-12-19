@@ -1,4 +1,4 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env runhaskell2
 
 {-# LANGUAGE DataKinds #-}
 
@@ -14,37 +14,14 @@ import Data.List.Split
 import Data.Matrix
 import Data.Maybe
 import Prelude
-import System.Environment.Executable
-import System.Directory
-import System.FilePath
 import Text.RE.Replace
 import Text.RE.PCRE.String
-
-scriptPathToFilePath :: ScriptPath -> IO FilePath
-scriptPathToFilePath (RunGHC fp) = return fp
-scriptPathToFilePath (Executable fp) = return fp
-scriptPathToFilePath Interactive = getCurrentDirectory
-
-readInput = do
-  exePath <- getScriptPath >>= scriptPathToFilePath
-  let inputPath = combine (takeDirectory exePath) "input.txt"
-  readFile inputPath
-
-tuplify2 :: [a] -> (a, a)
-tuplify2 [a, b] = (a, b)
-tuplify2 _ = error "oops"
+import Util
 
 upUntil :: (a -> Bool) -> (a -> a) -> a -> a
 upUntil p f x
   | p (f x) = x
   | otherwise = upUntil p f (f x)
-
-eachCons :: Int -> [a] -> [[a]]
-eachCons _ [] = []
-eachCons n xs@(_:rest)
-  | length xs == n = [window]
-  | otherwise = window : eachCons n rest
-  where window = take n xs
 
 type Pos = Point 2 Int
 data Cell = Air | Rock | Origin | Sand deriving (Eq)

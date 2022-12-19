@@ -37,6 +37,9 @@
               hpkgs.split
             ]))
             pkgs.haskell-language-server
+            (pkgs.writeScriptBin "runhaskell2" ''
+              runhaskell -i"$(dirname "$1")" "$@"
+            '')
             pkgs.hyperfine
             pkgs.nixpkgs-fmt
             pkgs.ruby_3_1

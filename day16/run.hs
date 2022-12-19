@@ -1,4 +1,4 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env runhaskell2
 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
@@ -10,31 +10,8 @@ import Data.Graph
 import Data.List
 import Data.Maybe
 import Data.Tuple.Extra
-import System.Environment.Executable
-import System.Directory
-import System.FilePath
 import Text.Regex.PCRE
-
-scriptPathToFilePath :: ScriptPath -> IO FilePath
-scriptPathToFilePath (RunGHC fp) = return fp
-scriptPathToFilePath (Executable fp) = return fp
-scriptPathToFilePath Interactive = getCurrentDirectory
-
-eachCons :: Int -> [a] -> [[a]]
-eachCons _ [] = []
-eachCons n xs@(_:rest)
-  | length xs == n = [window]
-  | otherwise = window : eachCons n rest
-  where window = take n xs
-
-tuplify2 :: [a] -> (a, a)
-tuplify2 [a, b] = (a, b)
-tuplify2 _ = error "oops"
-
-readInput = do
-  exePath <- getScriptPath >>= scriptPathToFilePath
-  let inputPath = combine (takeDirectory exePath) "input.txt"
-  readFile inputPath
+import Util
 
 parseLine :: String -> Valve
 parseLine input = (name, Pressure (read rate :: Int), adjs)
