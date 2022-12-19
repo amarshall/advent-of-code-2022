@@ -32,6 +32,7 @@
               hpkgs.extra
               hpkgs.hgeometry
               hpkgs.matrix
+              hpkgs.parallel
               hpkgs.regex-with-pcre
               hpkgs.split
             ]))
