@@ -67,10 +67,11 @@ walk graph nodeFromVertex vertexFromKey vertex unOpenedVertexes onlyWalkedVertex
      else maximum $ runEval $ parList rseq $ pressure : onlyWalk ++ (if vertex `elem` unOpenedVertexes then openAndWalk else [])
     where
       walk' = walk graph nodeFromVertex vertexFromKey
-      openAndWalk = map (\nextVertex -> walk' nextVertex (unOpenedVertexes \\ [vertex]) [] (time + 2) (pressure + (thisRate * coerce (max 0 (maxTime - (time + 1)))))) nexts
+      openAndWalk = map (\nextVertex -> walk' nextVertex (unOpenedVertexes \\ [vertex]) [] (time + 2) (pressure + openedPressure)) nexts
       onlyWalk = map (\nextVertex -> walk' nextVertex unOpenedVertexes (vertex:onlyWalkedVertexes) (time + 1) pressure) (nexts \\ onlyWalkedVertexes)
       (thisRate, name, adjs) = nodeFromVertex vertex
       nexts = map (vertexFromKey >>> fromJust) adjs
+      openedPressure = thisRate * coerce (max 0 (maxTime - time - 1))
 
 main = do
   input <- readInput
