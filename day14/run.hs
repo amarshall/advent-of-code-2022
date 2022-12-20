@@ -64,7 +64,7 @@ getOffset points = let
   in Vector2 x 1
 
 pointsToLines :: [Pos] -> [PLine]
-pointsToLines = eachCons 2 >>> map (tuplify2 >>> uncurry lineThrough)
+pointsToLines = eachCons2 >>> map (uncurry lineThrough)
 
 parse :: String -> [[Pos]]
 parse input = input & lines & map (splitOn " -> " >>> map parsePos)
